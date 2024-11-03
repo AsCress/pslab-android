@@ -23,6 +23,8 @@ import com.google.android.material.snackbar.Snackbar;
 import java.io.IOException;
 
 import io.pslab.R;
+import io.pslab.communication.CommunicationHandler;
+import io.pslab.communication.SocketClient;
 import io.pslab.others.CustomSnackBar;
 import io.pslab.others.ScienceLabCommon;
 import okhttp3.OkHttpClient;
@@ -84,7 +86,7 @@ public class ESPFragment extends DialogFragment {
         getDialog().getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
     }
 
-    private class ESPTask extends AsyncTask<Void, Void, String> {
+    private class ESPTask extends AsyncTask<Void, Void, Boolean> {
 
         @Override
         protected void onPreExecute() {
@@ -93,35 +95,32 @@ public class ESPFragment extends DialogFragment {
         }
 
         @Override
-        protected String doInBackground(Void... voids) {
-            String result = "";
+        protected Boolean doInBackground(Void... voids) {
             try {
-                OkHttpClient client = new OkHttpClient();
-                Request request = new Request.Builder()
-                        .url("http://" + espIPAddress)
-                        .build();
-                Response response = client.newCall(request).execute();
-                if (response.code() == 200) {
+                SocketClient socketClient = SocketClient.getInstance();
+                socketClient.openConnection(espIPAddress, 80);
+                if (socketClient.isConnected()) {
                     ScienceLabCommon.setIsWifiConnected(true);
                     ScienceLabCommon.setEspBaseIP(espIPAddress);
+                    return true;
                 }
-                result = response.body().string();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
-            return result;
+            return false;
         }
 
         @Override
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(Boolean result) {
             espConnectProgressBar.setVisibility(View.GONE);
             espConnectBtn.setVisibility(View.VISIBLE);
             Activity activity;
-            if (result.isEmpty() && ((activity = getActivity()) != null)) {
+            if (!result && ((activity = getActivity()) != null)) {
                 CustomSnackBar.showSnackBar(activity.findViewById(android.R.id.content),
                         getString(R.string.incorrect_IP_address_message), null, null, Snackbar.LENGTH_SHORT);
             } else {
-                Log.v("Response", result);
+                Log.v("ESPFragment", "ESP Connection Successful");
+                ScienceLabCommon.getInstance().openDevice(null);
             }
         }
     }

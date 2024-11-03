@@ -1,6 +1,7 @@
 package io.pslab.communication;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -11,30 +12,34 @@ import io.pslab.interfaces.HttpCallback;
 
 public class HttpAsyncTask extends AsyncTask<byte[], Void, Void> {
 
-    private HttpHandler mHttpHandler;
-    private HttpCallback<JSONObject> mHttpCallback;
+    private SocketClient socketClient;
+    private HttpCallback<byte[]> mHttpCallback;
+    private int bytesToRead;
 
-    public HttpAsyncTask(String baseIP, HttpCallback<JSONObject> httpCallback) {
-        mHttpHandler = new HttpHandler(baseIP);
+    public HttpAsyncTask(HttpCallback<byte[]> httpCallback, int bytesToRead) {
+        socketClient = SocketClient.getInstance();
         mHttpCallback = httpCallback;
+        this.bytesToRead = bytesToRead;
     }
 
     @Override
     protected Void doInBackground(byte[]... data) {
-        int res = 0;
+        int bytesRead = 0;
         try {
-            if (data.length != 0) {
-                res = mHttpHandler.write(data[0]);
+            if (data[0].length != 0) {
+                socketClient.write(data[0]);
 
             } else {
-                res = mHttpHandler.read();
+                bytesRead = socketClient.read(bytesToRead);
             }
-        } catch (IOException | JSONException e) {
+        } catch (IOException e) {
             mHttpCallback.error(e);
             e.printStackTrace();
         }
-        if (res == 1) {
-            mHttpCallback.success(mHttpHandler.getReceivedData());
+        if (data[0].length == 0 && bytesRead == bytesToRead) {
+            mHttpCallback.success(socketClient.getReceivedData());
+        } else if (data[0].length != 0) {
+            mHttpCallback.success(new byte[]{});
         } else {
             mHttpCallback.error(new Exception());
         }

@@ -36,6 +36,7 @@ import io.pslab.communication.peripherals.DACChannel;
 import io.pslab.communication.peripherals.I2C;
 import io.pslab.fragment.HomeFragment;
 import io.pslab.others.InitializationVariable;
+import io.pslab.others.ScienceLabCommon;
 
 /**
  * Created by viveksb007 on 28/3/17.
@@ -79,15 +80,19 @@ public class ScienceLab {
     public ScienceLab(CommunicationHandler communicationHandler) {
         mCommandsProto = new CommandsProto();
         mAnalogConstants = new AnalogConstants();
-        mCommunicationHandler = communicationHandler;
-        if (isDeviceFound() && MainActivity.hasPermission) {
-            try {
-                mCommunicationHandler.open(1000000);
-                //Thread.sleep(200);
-                mPacketHandler = new PacketHandler(50, mCommunicationHandler);
-            } catch (IOException | NullPointerException e) {
-                e.printStackTrace();
+        if (communicationHandler != null) {
+            mCommunicationHandler = communicationHandler;
+            if (isDeviceFound() && MainActivity.hasPermission) {
+                try {
+                    mCommunicationHandler.open(1000000);
+                    //Thread.sleep(200);
+                    mPacketHandler = new PacketHandler(50, mCommunicationHandler);
+                } catch (IOException | NullPointerException e) {
+                    e.printStackTrace();
+                }
             }
+        } else {
+            mPacketHandler = new PacketHandler(50, null);
         }
         if (isConnected()) {
             initializeVariables();
@@ -745,7 +750,7 @@ public class ScienceLab {
      * @return true is device is connected; false otherwise
      */
     public boolean isConnected() {
-        return mCommunicationHandler.isConnected();
+        return (ScienceLabCommon.isWifiConnected || mCommunicationHandler.isConnected());
     }
 
     /* DIGITAL SECTION */
@@ -2133,7 +2138,7 @@ public class ScienceLab {
      * @throws IOException
      * @throws InterruptedException
      */
-    public void enterBootloader() throws IOException, InterruptedException {
+    public void enterBootloader() throws Exception {
         mCommunicationHandler.close();
         mCommunicationHandler.open(460800);
         mPacketHandler = new PacketHandler(50, mCommunicationHandler);

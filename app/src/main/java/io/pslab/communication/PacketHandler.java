@@ -41,8 +41,10 @@ public class PacketHandler {
         this.connected = false;
         this.timeout = timeout;
         this.mCommandsProto = new CommandsProto();
-        this.mCommunicationHandler = communicationHandler;
-        connected = (mCommunicationHandler.isConnected() || ScienceLabCommon.isWifiConnected());
+        if (communicationHandler != null) {
+            this.mCommunicationHandler = communicationHandler;
+        }
+        connected = (ScienceLabCommon.isWifiConnected() || mCommunicationHandler.isConnected());
     }
 
     public boolean isConnected() {
@@ -247,49 +249,44 @@ public class PacketHandler {
 
     public int commonRead(int bytesToRead) throws IOException {
         final int[] bytesRead = {0};
-        if (mCommunicationHandler.isConnected()) {
+        if (mCommunicationHandler != null && mCommunicationHandler.isConnected()) {
             bytesRead[0] = mCommunicationHandler.read(buffer, bytesToRead, timeout);
         } else if (ScienceLabCommon.isWifiConnected()) {
-            httpAsyncTask = new HttpAsyncTask(ScienceLabCommon.getEspIP(), new HttpCallback<JSONObject>() {
+            httpAsyncTask = new HttpAsyncTask(new HttpCallback<byte[]>() {
                 @Override
-                public void success(JSONObject jsonObject) {
-                    try {
-                        //Server will send byte array
-                        buffer = (byte[]) jsonObject.get("data");
-                        bytesRead[0] = buffer.length;
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                public void success(byte[] t1) {
+                    System.arraycopy(t1, 0, buffer, 0, bytesToRead);
+                    bytesRead[0] = bytesToRead;
+                    Log.d(TAG, "Read: " + t1.length);
                 }
 
                 @Override
                 public void error(Exception e) {
                     Log.e(TAG, "Error reading data over ESP");
                 }
-            });
+            }, bytesToRead);
             httpAsyncTask.execute(new byte[]{});
         }
         return bytesRead[0];
     }
 
     public void commonWrite(byte[] data) throws IOException {
-        if (mCommunicationHandler.isConnected()) {
+        if (mCommunicationHandler != null && mCommunicationHandler.isConnected()) {
             mCommunicationHandler.write(data, timeout);
         } else if (ScienceLabCommon.isWifiConnected()) {
-            httpAsyncTask = new HttpAsyncTask(ScienceLabCommon.getEspIP(), new HttpCallback<JSONObject>() {
+            httpAsyncTask = new HttpAsyncTask(new HttpCallback<byte[]>() {
                 @Override
-                public void success(JSONObject jsonObject) {
-                    Log.v(TAG, "write response:" + jsonObject.toString());
+                public void success(byte[] t1) {
+                    Log.d(TAG, "Data written successfully");
                 }
 
                 @Override
                 public void error(Exception e) {
                     Log.e(TAG, "Error writing data over ESP");
                 }
-            });
-
+            }, 0);
             httpAsyncTask.execute(data);
         }
-
     }
+
 }
