@@ -280,7 +280,7 @@ public class PacketHandler {
                 try {
                     socketClient.write(data);
                 } catch (Exception e) {
-                    Log.e(TAG, "Error reading data over ESP");
+                    Log.e(TAG, "Error writing data over ESP");
                 }
                 return null;
             });
@@ -299,8 +299,9 @@ public class PacketHandler {
             } else {
                 socketClient.closeConnection();
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            executor.shutdown();
+        } catch (Exception e) {
+            Log.e(TAG, "Error closing connection");
         }
     }
 }

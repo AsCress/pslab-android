@@ -104,7 +104,6 @@ public class MainActivity extends AppCompatActivity {
     private PendingIntent mPermissionIntent;
     private CommunicationHandler communicationHandler;
     private USBDetachReceiver usbDetachReceiver;
-    private WifiDisconnectReceiver wifiDisconnectReceiver;
     private static final String ACTION_USB_PERMISSION = "com.android.example.USB_PERMISSION";
     private static final int TIME_INTERVAL = 2000;
     private long mBackPressed;
@@ -142,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
 
         IntentFilter wifiDisconnectFilter = new IntentFilter();
         wifiDisconnectFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
-        wifiDisconnectReceiver = new WifiDisconnectReceiver(this);
+        WifiDisconnectReceiver wifiDisconnectReceiver = new WifiDisconnectReceiver(this);
         registerReceiver(wifiDisconnectReceiver, wifiDisconnectFilter);
 
         setSupportActionBar(toolbar);
