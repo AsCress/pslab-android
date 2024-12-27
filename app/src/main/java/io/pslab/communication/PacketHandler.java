@@ -2,9 +2,6 @@ package io.pslab.communication;
 
 import android.util.Log;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -13,8 +10,10 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
-import io.pslab.interfaces.HttpCallback;
 import io.pslab.others.ScienceLabCommon;
 
 /**
@@ -34,13 +33,15 @@ public class PacketHandler {
     private int timeout = 500, VERSION_STRING_LENGTH = 8, FW_VERSION_LENGTH = 3;
     public static int PSLAB_FW_VERSION = 0;
     ByteBuffer burstBuffer = ByteBuffer.allocate(2000);
-    private HttpAsyncTask httpAsyncTask;
+    private SocketClient socketClient;
+    ExecutorService executor = Executors.newSingleThreadExecutor();
 
     public PacketHandler(int timeout, CommunicationHandler communicationHandler) {
         this.loadBurst = false;
         this.connected = false;
         this.timeout = timeout;
         this.mCommandsProto = new CommandsProto();
+        socketClient = SocketClient.getInstance();
         if (communicationHandler != null) {
             this.mCommunicationHandler = communicationHandler;
         }
@@ -252,20 +253,21 @@ public class PacketHandler {
         if (mCommunicationHandler != null && mCommunicationHandler.isConnected()) {
             bytesRead[0] = mCommunicationHandler.read(buffer, bytesToRead, timeout);
         } else if (ScienceLabCommon.isWifiConnected()) {
-            httpAsyncTask = new HttpAsyncTask(new HttpCallback<byte[]>() {
-                @Override
-                public void success(byte[] t1) {
-                    System.arraycopy(t1, 0, buffer, 0, bytesToRead);
+            Future<Void> future = executor.submit(() -> {
+                try {
+                    socketClient.read(bytesToRead);
+                    System.arraycopy(socketClient.getReceivedData(), 0, buffer, 0, bytesToRead);
                     bytesRead[0] = bytesToRead;
-                    Log.d(TAG, "Read: " + t1.length);
-                }
-
-                @Override
-                public void error(Exception e) {
+                } catch (Exception e) {
                     Log.e(TAG, "Error reading data over ESP");
                 }
-            }, bytesToRead);
-            httpAsyncTask.execute(new byte[]{});
+                return null;
+            });
+            try {
+                future.get();
+            } catch (Exception e) {
+                throw new IOException("Error reading data", e);
+            }
         }
         return bytesRead[0];
     }
@@ -274,19 +276,31 @@ public class PacketHandler {
         if (mCommunicationHandler != null && mCommunicationHandler.isConnected()) {
             mCommunicationHandler.write(data, timeout);
         } else if (ScienceLabCommon.isWifiConnected()) {
-            httpAsyncTask = new HttpAsyncTask(new HttpCallback<byte[]>() {
-                @Override
-                public void success(byte[] t1) {
-                    Log.d(TAG, "Data written successfully");
+            Future<Void> future = executor.submit(() -> {
+                try {
+                    socketClient.write(data);
+                } catch (Exception e) {
+                    Log.e(TAG, "Error reading data over ESP");
                 }
-
-                @Override
-                public void error(Exception e) {
-                    Log.e(TAG, "Error writing data over ESP");
-                }
-            }, 0);
-            httpAsyncTask.execute(data);
+                return null;
+            });
+            try {
+                future.get();
+            } catch (Exception e) {
+                throw new IOException("Error writing data", e);
+            }
         }
     }
 
+    public void close() {
+        try {
+            if (mCommunicationHandler != null) {
+                mCommunicationHandler.close();
+            } else {
+                socketClient.closeConnection();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

@@ -233,11 +233,7 @@ public class ScienceLab {
     }
 
     public void close() {
-        try {
-            mCommunicationHandler.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        mPacketHandler.close();
     }
 
     private void captureFullSpeedHrInitialize(String channel, int samples, double timeGap, List<String> args) {
@@ -741,6 +737,9 @@ public class ScienceLab {
      * @return true is device found; false otherwise
      */
     public boolean isDeviceFound() {
+        if (mCommunicationHandler == null) {
+            return false;
+        }
         return mCommunicationHandler.isDeviceFound();
     }
 
@@ -750,7 +749,8 @@ public class ScienceLab {
      * @return true is device is connected; false otherwise
      */
     public boolean isConnected() {
-        return (ScienceLabCommon.isWifiConnected || mCommunicationHandler.isConnected());
+        return ScienceLabCommon.isWifiConnected ||
+                (mCommunicationHandler != null && mCommunicationHandler.isConnected());
     }
 
     /* DIGITAL SECTION */

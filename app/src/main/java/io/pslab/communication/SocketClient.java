@@ -34,6 +34,8 @@ public class SocketClient {
             return;
         }
         isConnected = true;
+        socket.setTcpNoDelay(true);
+        socket.setKeepAlive(true);
     }
 
     public static SocketClient getInstance() {
@@ -47,26 +49,31 @@ public class SocketClient {
         return isConnected;
     }
 
-    public void write(byte[] data) throws IOException {
+    public synchronized void write(byte[] data) throws IOException {
         if (isConnected && socketClient.isConnected && outputStream != null) {
             outputStream.write(data);
         }
     }
 
-    public int read(int bytesToRead) throws IOException {
-        int bytesRead = 0;
-        if (isConnected && socketClient.isConnected && inputStream != null) {
-            bytesRead = inputStream.read(buffer, 0, bytesToRead);
-
-            if (bytesRead > 0) {
-                receivedData = new byte[bytesRead];
-                System.arraycopy(buffer, 0, receivedData, 0, bytesRead);
+    public synchronized int read(int bytesToBeRead) throws IOException {
+        int numBytesRead = 0;
+        int readNow;
+        Log.v(TAG, "To read : " + bytesToBeRead);
+        int bytesToBeReadTemp = bytesToBeRead;
+        receivedData = new byte[DEFAULT_READ_BUFFER_SIZE];
+        while (numBytesRead < bytesToBeRead) {
+            readNow = inputStream.read(buffer, 0, bytesToBeReadTemp);
+            if (readNow <= 0) {
+                Log.e(TAG, "Read Error: " + bytesToBeReadTemp);
+                return numBytesRead;
             } else {
-                Log.e(TAG, "Read Error: " + bytesToRead);
-                return bytesRead;
+                System.arraycopy(buffer, 0, receivedData, numBytesRead, readNow);
+                numBytesRead += readNow;
+                bytesToBeReadTemp -= readNow;
             }
         }
-        return bytesRead;
+        Log.v("Bytes Read", "" + numBytesRead);
+        return numBytesRead;
     }
 
     public byte[] getReceivedData() {

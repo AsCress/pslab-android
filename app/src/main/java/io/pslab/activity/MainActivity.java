@@ -1,5 +1,6 @@
 package io.pslab.activity;
 
+import static io.pslab.others.ScienceLabCommon.isWifiConnected;
 import static io.pslab.others.ScienceLabCommon.scienceLab;
 
 import android.app.PendingIntent;
@@ -10,6 +11,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -55,6 +57,7 @@ import io.pslab.others.CustomTabService;
 import io.pslab.others.InitializationVariable;
 import io.pslab.others.ScienceLabCommon;
 import io.pslab.receivers.USBDetachReceiver;
+import io.pslab.receivers.WifiDisconnectReceiver;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -101,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
     private PendingIntent mPermissionIntent;
     private CommunicationHandler communicationHandler;
     private USBDetachReceiver usbDetachReceiver;
+    private WifiDisconnectReceiver wifiDisconnectReceiver;
     private static final String ACTION_USB_PERMISSION = "com.android.example.USB_PERMISSION";
     private static final int TIME_INTERVAL = 2000;
     private long mBackPressed;
@@ -135,6 +139,11 @@ public class MainActivity extends AppCompatActivity {
         usbDetachFilter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
         usbDetachReceiver = new USBDetachReceiver(this);
         registerReceiver(usbDetachReceiver, usbDetachFilter);
+
+        IntentFilter wifiDisconnectFilter = new IntentFilter();
+        wifiDisconnectFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
+        wifiDisconnectReceiver = new WifiDisconnectReceiver(this);
+        registerReceiver(wifiDisconnectReceiver, wifiDisconnectFilter);
 
         setSupportActionBar(toolbar);
         mHandler = new Handler();
@@ -414,7 +423,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_pslab_connected:
+            case R.id.menu_wifi_connected, R.id.menu_pslab_connected:
                 CustomSnackBar.showSnackBar(findViewById(android.R.id.content),
                         getString(R.string.device_connected_successfully), null, null, Snackbar.LENGTH_SHORT);
                 break;
@@ -496,8 +505,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        menu.getItem(0).setVisible(PSLabisConnected);
-        menu.getItem(1).setVisible(!PSLabisConnected);
+        menu.getItem(0).setVisible(isWifiConnected);
+        menu.getItem(1).setVisible(PSLabisConnected);
+        menu.getItem(2).setVisible(!PSLabisConnected && !isWifiConnected);
         setPSLabVersionIDs();
         return true;
     }

@@ -19,16 +19,11 @@ import androidx.fragment.app.DialogFragment;
 
 import com.google.android.material.snackbar.Snackbar;
 
-import java.io.IOException;
 
 import io.pslab.R;
-import io.pslab.communication.CommunicationHandler;
 import io.pslab.communication.SocketClient;
 import io.pslab.others.CustomSnackBar;
 import io.pslab.others.ScienceLabCommon;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 public class ESPFragment extends DialogFragment {
     private static final String TAG = ESPFragment.class.getSimpleName();
@@ -114,6 +109,9 @@ public class ESPFragment extends DialogFragment {
             } else {
                 Log.v("ESPFragment", "ESP Connection Successful");
                 ScienceLabCommon.getInstance().openDevice(null);
+                ScienceLabCommon.isWifiConnected = true;
+                getParentFragmentManager().beginTransaction().remove(ESPFragment.this).commitAllowingStateLoss();
+                getParentFragmentManager().beginTransaction().replace(R.id.frame, HomeFragment.newInstance(true, false)).commitAllowingStateLoss();
             }
         }
     }
