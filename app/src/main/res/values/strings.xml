@@ -10,6 +10,7 @@
     <string name="nav_instruments">Instruments</string>
     <string name="nav_settings">Settings</string>
     <string name="nav_about_us">About Us</string>
+    <string name="nav_documentation">Documentation</string>
     <string name="nav_buy_pslab">Buy PSLab</string>
     <string name="nav_report">Feedback &amp; Bugs</string>
     <string name="nav_help_feedback">FAQ</string>
@@ -273,6 +274,9 @@
     <string name="mlx90614">mlx90614</string>
     <string name="bmp180">bmp180</string>
     <string name="mpu925x">mpu925x</string>
+    <string name="vl53l0x">VL53L0X</string>
+    <string name="ccs811">CCS811</string>
+    <string name="apds9960">APDS9960</string>
 
     <string name="raw_data">Raw Data</string>
     <string name="configure">Configure</string>
@@ -288,6 +292,18 @@
     <string name="gx">Gx</string>
     <string name="gy">Gy</string>
     <string name="gz">Gz</string>
+    <string name="red">Red</string>
+    <string name="green">Green</string>
+    <string name="blue">Blue</string>
+    <string name="clear">Clear</string>
+    <string name="gesture">Gesture</string>
+    <string name="eCO2">eCO2</string>
+    <string name="eTVOC">TVOC</string>
+    <string name="plot_lux">Plot - Light Lux</string>
+    <string name="plot_proximity">Plot - Proximity</string>
+    <string name="proximity">Prox</string>
+    <string name="lux_unit">(lx)</string>
+    <string name="light_lux">Lux</string>
     <string name="temp">Temp</string>
     <string name="luminosity">Luminosity</string>
     <string name="humidity">Humidity</string>
@@ -309,7 +325,11 @@
     <string name="set_rate">Set Rate</string>
     <string name="plot_accelerometer">Plot - Accelerometer</string>
     <string name="plot_gyroscope">Plot - Gyroscope</string>
+    <string name="plot_eCO2">Plot - eCO2</string>
+    <string name="plot_eTVOC">Plot - TVOC</string>
     <string name="rad">(rad)</string>
+    <string name="ppm">(ppm)</string>
+    <string name="ppb">(ppb)</string>
     <string name="angle">Angle</string>
     <string name="time">Time (sec)</string>
     <string name="infinite_symbol">∞</string>
@@ -319,6 +339,16 @@
     <string name="alt">Alt.</string>
     <string name="meter">(m)</string>
     <string name="pascal">(Pa)</string>
+
+    <string name="up">UP</string>
+    <string name="down">DOWN</string>
+    <string name="left">LEFT</string>
+    <string name="right">RIGHT</string>
+
+    <string-array name="apds9960_spinner">
+        <item>Color, Proximity and Ambient Light</item>
+        <item>Gesture</item>
+    </string-array>
 
     <string-array name="tsl2561_gain_spinner">
         <item>No gain</item>
@@ -494,7 +524,7 @@
     <string name="timebase_and_trigger">Timebase and Trigger</string>
     <string name="data_analysis">Data Analysis</string>
     <string name="xy_plot">XY Plot</string>
-    <string name="hundred_ms">100ms</string>
+    <string name="hundred_ms">100 ms</string>
     <string name="hyphen">-</string>
     <string name="plus">+</string>
     <string name="select_a_value">Select a Value </string>
@@ -1058,11 +1088,16 @@
     <string name="unit_volts">\u0020V</string>
     <string name="no_playback_data">No data to display</string>
     <string name="privacy_policy">Privacy Policy</string>
+    <string name="third_party_libs">Open Source Licenses</string>
     <string name="auto_scale_error">No input found</string>
     <string name="auto_scale">Auto</string>
     <string name="control_stop">Stop</string>
     <string name="control_run">Run</string>
+    <string name="distance">Distance</string>
+    <string name="distance_unit">(mm)</string>
 
+    <string name="legacy_title">Legacy Firmware Detected</string>
+    <string name="legacy_message">We have detected that your PSLab device is running legacy firmware. Please note that support for this firmware has ended. For the best experience and continued support, please update your device to the latest firmware version.</string>
     <string name="pin_esp_name" translatable="false">ESP</string>
     <string name="pin_esp_description">ESP Programmer pin</string>
     <string name="pin_rxd_name" translatable="false">RXD</string>

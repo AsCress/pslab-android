@@ -23,6 +23,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.browser.customtabs.CustomTabsServiceConnection;
@@ -31,6 +32,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.google.android.gms.oss.licenses.OssLicensesMenuActivity;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -102,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String ACTION_USB_PERMISSION = "com.android.example.USB_PERMISSION";
     private static final int TIME_INTERVAL = 2000;
     private long mBackPressed;
+    private static MainActivity instance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,6 +154,7 @@ public class MainActivity extends AppCompatActivity {
             CURRENT_TAG = TAG_INSTRUMENTS;
             loadHomeFragment();
         }
+        instance = this;
     }
 
     private void loadHomeFragment() {
@@ -183,6 +187,10 @@ public class MainActivity extends AppCompatActivity {
             drawer.closeDrawers();
             invalidateOptionsMenu();
         }
+    }
+
+    public static MainActivity getInstance() {
+        return instance;
     }
 
     private Fragment getHomeFragment() throws IOException {
@@ -266,6 +274,12 @@ public class MainActivity extends AppCompatActivity {
                         navItemIndex = 5;
                         CURRENT_TAG = TAG_ABOUTUS;
                         break;
+                    case R.id.nav_documentation:
+                        customTabService.launchUrl("https://docs.pslab.io/");
+                        if (drawer != null) {
+                            drawer.closeDrawers();
+                        }
+                        break;
                     case R.id.nav_rate:
                         customTabService.launchUrl("https://play.google.com/store/apps/details?id=io.pslab");
                         if (drawer != null) {
@@ -311,6 +325,10 @@ public class MainActivity extends AppCompatActivity {
                             drawer.closeDrawers();
                         }
                         break;
+                    case R.id.nav_third_party_libs:
+                        OssLicensesMenuActivity.setActivityTitle(getString(R.string.third_party_libs));
+                        startActivity(new Intent(MainActivity.this, OssLicensesMenuActivity.class));
+                        break;
                     default:
                         navItemIndex = 0;
                 }
@@ -342,6 +360,17 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             txtName.setText(getString(R.string.device_not_found));
         }
+    }
+
+    public void showFirmwareDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.legacy_title);
+        builder.setCancelable(false);
+        builder.setMessage(R.string.legacy_message);
+        builder.setIcon(android.R.drawable.ic_dialog_alert);
+        builder.setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
+        builder.create().show();
+
     }
 
     @Override
@@ -448,7 +477,7 @@ public class MainActivity extends AppCompatActivity {
     private void attemptToGetUSBPermission() {
         if (!("android.hardware.usb.action.USB_DEVICE_ATTACHED".equals(getIntent().getAction()))) {
             if (communicationHandler.isDeviceFound() && !usbManager.hasPermission(communicationHandler.mUsbDevice)) {
-                mPermissionIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
+                mPermissionIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), PendingIntent.FLAG_IMMUTABLE);
                 IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
                 registerReceiver(mUsbReceiver, filter);
                 receiverRegister = true;
