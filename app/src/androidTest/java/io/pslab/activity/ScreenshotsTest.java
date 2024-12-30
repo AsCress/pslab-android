@@ -39,7 +39,7 @@ import org.junit.runner.RunWith;
 @LargeTest
 @RunWith(AndroidJUnit4.class)
 public class ScreenshotsTest {
-    private static final int TIMEOUT = 5000;
+    private static final int TIMEOUT = 10000;
     private static final String APP_PACKAGE_NAME = "io.pslab";
     UiDevice mDevice;
 
