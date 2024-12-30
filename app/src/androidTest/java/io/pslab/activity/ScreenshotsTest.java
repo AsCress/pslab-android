@@ -1,35 +1,19 @@
 package io.pslab.activity;
 
-
 import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.*;
-import static androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition;
 import static androidx.test.espresso.matcher.ViewMatchers.*;
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
-import android.app.Activity;
 import android.app.Instrumentation;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewParent;
 
-import androidx.test.espresso.Espresso;
-import androidx.test.espresso.IdlingResource;
-import androidx.test.espresso.PerformException;
-import androidx.test.espresso.UiController;
-import androidx.test.espresso.ViewAction;
-import androidx.test.espresso.util.HumanReadables;
-import androidx.test.espresso.util.TreeIterables;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 
-import tools.fastlane.screengrab.FalconScreenshotStrategy;
 import tools.fastlane.screengrab.Screengrab;
 import tools.fastlane.screengrab.UiAutomatorScreenshotStrategy;
 import tools.fastlane.screengrab.locale.LocaleTestRule;
@@ -46,24 +30,16 @@ import androidx.test.uiautomator.UiScrollable;
 import androidx.test.uiautomator.UiSelector;
 import androidx.test.uiautomator.Until;
 
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.hamcrest.TypeSafeMatcher;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.io.File;
-import java.util.concurrent.TimeoutException;
-
-import io.pslab.R;
-
 @LargeTest
 @RunWith(AndroidJUnit4.class)
 public class ScreenshotsTest {
-    private static final int LAUNCH_TIMEOUT = 10000;
+    private static final int TIMEOUT = 5000;
     private static final String APP_PACKAGE_NAME = "io.pslab";
     UiDevice mDevice;
 
@@ -97,7 +73,59 @@ public class ScreenshotsTest {
         context.startActivity(intent);
         Screengrab.setDefaultScreenshotStrategy(new UiAutomatorScreenshotStrategy());
 
-        mDevice.wait(Until.hasObject(By.pkg(APP_PACKAGE_NAME).depth(0)), LAUNCH_TIMEOUT);
+        mDevice.wait(Until.hasObject(By.pkg(APP_PACKAGE_NAME).depth(0)), TIMEOUT);
+    }
+
+    @Test
+    public void testTakeScreenshot() throws UiObjectNotFoundException {
+        mDevice.wait(Until.hasObject(By.text("Instruments")), TIMEOUT);
+        Screengrab.screenshot("dashboard");
+        UiObject openDrawer = mDevice.findObject(new UiSelector().description("open_drawer"));
+        openDrawer.click();
+
+        mDevice.wait(Until.hasObject(By.text("Not Connected")), TIMEOUT);
+        Screengrab.screenshot("drawer");
+
+        UiScrollable navRecyclerView = new UiScrollable(new UiSelector().resourceId(APP_PACKAGE_NAME + ":id/nav_instruments"));
+        UiObject item = navRecyclerView.getChild(new UiSelector().text("Instruments"));
+        item.click();
+
+        UiScrollable applicationsRecyclerView = new UiScrollable(new UiSelector().resourceId(APP_PACKAGE_NAME + ":id/applications_recycler_view"));
+
+        applicationsRecyclerView.scrollTextIntoView("ACCELEROMETER");
+        onView(withText("ACCELEROMETER")).perform(click());
+        mDevice.wait(Until.hasObject(By.text("Accelerometer")), TIMEOUT);
+        Screengrab.screenshot("instrument_accelerometer_view");
+
+        mDevice.pressBack();
+
+        applicationsRecyclerView.scrollTextIntoView("BAROMETER");
+        onView(withText("BAROMETER")).perform(click());
+        mDevice.wait(Until.hasObject(By.text("Barometer")), TIMEOUT);
+        Screengrab.screenshot("instrument_barometer_view");
+
+        mDevice.pressBack();
+
+        applicationsRecyclerView.scrollTextIntoView("MULTIMETER");
+        onView(withText("MULTIMETER")).perform(click());
+        mDevice.wait(Until.hasObject(By.text("Multimeter")), TIMEOUT);
+        Screengrab.screenshot("instrument_multimeter_view");
+
+        mDevice.pressBack();
+
+        applicationsRecyclerView.scrollTextIntoView("WAVE GENERATOR");
+        onView(withText("WAVE GENERATOR")).perform(click());
+        mDevice.wait(Until.hasObject(By.text("Wave Generator")), TIMEOUT);
+        Screengrab.screenshot("instrument_wave_generator");
+
+        mDevice.pressBack();
+
+        applicationsRecyclerView.scrollTextIntoView("OSCILLOSCOPE");
+        onView(withText("OSCILLOSCOPE")).perform(click());
+        mDevice.wait(Until.hasObject(By.text("Oscilloscope")), TIMEOUT);
+        mDevice.swipe(500, 0, 500, 1500, 10);
+        mDevice.wait(Until.hasObject(By.text("400")), TIMEOUT);
+        Screengrab.screenshot("oscilloscope_channel_view");
     }
 
     private String getLauncherPackageName() {
@@ -108,66 +136,5 @@ public class ScreenshotsTest {
         ResolveInfo resolveInfo = pm.resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY);
         assert resolveInfo != null;
         return resolveInfo.activityInfo.packageName;
-    }
-
-    @Test
-    public void testTakeScreenshot() throws UiObjectNotFoundException {
-        Screengrab.screenshot("dashboard");
-
-        UiObject openDrawer = mDevice.findObject(new UiSelector().description("open_drawer"));
-        openDrawer.click();
-        Screengrab.screenshot("drawer");
-
-        UiScrollable navRecyclerView = new UiScrollable(new UiSelector().resourceId(APP_PACKAGE_NAME + ":id/nav_instruments"));
-        UiObject item = navRecyclerView.getChild(new UiSelector().text("Instruments"));
-        item.click();
-
-        UiScrollable applicationsRecyclerView = new UiScrollable(new UiSelector().resourceId(APP_PACKAGE_NAME + ":id/applications_recycler_view"));
-        applicationsRecyclerView.scrollTextIntoView("ACCELEROMETER");
-        item = applicationsRecyclerView.getChild(new UiSelector().text("ACCELEROMETER"));
-        item.clickAndWaitForNewWindow();
-        Screengrab.screenshot("instrument_accelerometer_view");
-
-        mDevice.pressBack();
-
-        applicationsRecyclerView.scrollTextIntoView("BAROMETER");
-        item = applicationsRecyclerView.getChild(new UiSelector().text("BAROMETER"));
-        item.clickAndWaitForNewWindow();
-        Screengrab.screenshot("instrument_barometer_view");
-
-        mDevice.pressBack();
-
-        applicationsRecyclerView.scrollTextIntoView("MULTIMETER");
-        item = applicationsRecyclerView.getChild(new UiSelector().text("MULTIMETER"));
-        item.clickAndWaitForNewWindow();
-        Screengrab.screenshot("instrument_multimeter_view");
-
-        mDevice.pressBack();
-
-        applicationsRecyclerView.scrollTextIntoView("LOGIC ANALYZER");
-        item = applicationsRecyclerView.getChild(new UiSelector().text("LOGIC ANALYZER"));
-        item.clickAndWaitForNewWindow();
-        Screengrab.screenshot("logic_analyzer_view");
-
-        mDevice.pressBack();
-
-        UiObject moreOptions = mDevice.findObject(new UiSelector().description("More options"));
-        moreOptions.click();
-
-        UiObject pinLayoutFront = mDevice.findObject(new UiSelector().text("Pin Layout Front"));
-        pinLayoutFront.clickAndWaitForNewWindow();
-        Screengrab.screenshot("layout_pin_front");
-
-        openDrawer.click();
-
-        item = navRecyclerView.getChild(new UiSelector().text("Instruments"));
-        item.clickAndWaitForNewWindow();
-
-        applicationsRecyclerView.scrollTextIntoView("OSCILLOSCOPE");
-        item = applicationsRecyclerView.getChild(new UiSelector().text("OSCILLOSCOPE"));
-        item.clickAndWaitForNewWindow();
-        Screengrab.screenshot("oscilloscope_channel_view");
-
-        mDevice.pressBack();
     }
 }

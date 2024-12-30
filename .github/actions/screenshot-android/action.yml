@@ -30,7 +30,7 @@ runs:
 
     - name: Create AVD and Cache Snapshot
       if: steps.avd-cache.outputs.cache-hit != 'true'
-      uses: reactivecircus/android-emulator-runner@v2
+      uses: reactivecircus/android-emulator-runner@v2.33.0
       with:
         api-level: ${{ inputs.ANDROID_EMULATOR_API }}
         arch: ${{ inputs.ANDROID_EMULATOR_ARCH }}
@@ -42,7 +42,7 @@ runs:
         script: echo "Generated AVD snapshot for caching."
 
     - name: Create Android Screenshots
-      uses: reactivecircus/android-emulator-runner@v2
+      uses: reactivecircus/android-emulator-runner@v2.33.0
       with:
         api-level: ${{ inputs.ANDROID_EMULATOR_API }}
         arch: ${{ inputs.ANDROID_EMULATOR_ARCH }}
