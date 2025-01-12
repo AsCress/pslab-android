@@ -6,6 +6,8 @@ on:
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  ANDROID_EMULATOR_API: 34
+  ANDROID_EMULATOR_ARCH: x86_64
 
 jobs:
   release:
@@ -15,17 +17,6 @@ jobs:
     steps:
       - name: Download repository
         uses: actions/checkout@v4
-
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.3'
-          bundler-cache: true
-
-      - name: Prepare Bundler
-        run: |
-          bundle config path vendor/bundle
-          bundle install --jobs 4 --retry 3
 
       - name: Prepare Build Keys
         env:
@@ -43,8 +34,6 @@ jobs:
 
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          
-          git clone --branch=fastlane --depth=1 https://${{ github.repository_owner }}:${{ github.token }}@github.com/${{ github.repository }} fastlane
 
       - name: Android Screenshot Workflow
         uses: ./.github/actions/screenshot-android

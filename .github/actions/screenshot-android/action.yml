@@ -1,4 +1,4 @@
-name: "Android Screenshots Workflow"
+name: "Screenshots Workflow"
 
 inputs:
   ANDROID_EMULATOR_API:
@@ -13,12 +13,24 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Setup Java
+      uses: actions/setup-java@v3
+      with:
+       distribution: 'adopt'
+       java-version: '17'
+
+    - name: Build APKs
+      shell: bash
+      run: |
+        ./gradlew assembleDebug assembleAndroidTest --stacktrace
+
     - name: Enable KVM group perms
       shell: bash
       run: |
         echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
         sudo udevadm control --reload-rules
         sudo udevadm trigger --name-match=kvm
+
     - name: Cache AVD
       uses: actions/cache@v4
       id: avd-cache
@@ -41,6 +53,23 @@ runs:
         disable-animations: false
         script: echo "Generated AVD snapshot for caching."
 
+    - name: Setup Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '3.3'
+        bundler-cache: true
+
+    - name: Prepare Bundler
+      shell: bash
+      run: |
+        bundle config path vendor/bundle
+        bundle install --jobs 4 --retry 3
+
+    - name: Setup Fastlane
+      shell: bash
+      run: |
+        git clone --branch=fastlane --depth=1 https://${{ github.repository_owner }}:${{ github.token }}@github.com/${{ github.repository }} fastlane
+
     - name: Create Android Screenshots
       uses: reactivecircus/android-emulator-runner@v2.33.0
       with:
@@ -52,7 +81,10 @@ runs:
         emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
         disable-animations: true
         script: |
-          bundle exec fastlane screengrab
-          if [[ $? -ne 0 ]]; then
-              exit 1
-          fi
+          bundle exec fastlane screengrab || exit 1
+          
+    - name: Upload Screenshots
+      uses: actions/upload-artifact@v4
+      with:
+          name: Android Screenshots
+          path: fastlane/metadata/android/en-US/images/phoneScreenshots
