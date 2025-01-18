@@ -63,7 +63,7 @@ jobs:
           ENCRYPTED_F10B5E0E5262_IV: ${{ secrets.ENCRYPTED_F10B5E0E5262_IV }}
           ENCRYPTED_F10B5E0E5262_KEY: ${{ secrets.ENCRYPTED_F10B5E0E5262_KEY }}
         run: |
-          bash scripts/prep-key.sh
+          bash scripts/prep-android-key.sh
 
       - name: Android Workflow
         uses: ./.github/actions/android
@@ -127,24 +127,11 @@ jobs:
           git branch -m apk
           git push --force origin apk
 
-      - name: Setup Ruby
-        if: ${{ github.repository == 'fossasia/pslab-android' }}
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.3'
-          bundler-cache: true
-
-      - name: Prepare Bundler
-        if: ${{ github.repository == 'fossasia/pslab-android' }}
-        run: |
-          bundle config path vendor/bundle
-          bundle install --jobs 4 --retry 3
-
       - name: Update app in Closed Testing track
         if: ${{ github.repository == 'fossasia/pslab-android' }}
         run: |
           git clone --branch=fastlane --depth=1 https://${{ github.repository_owner }}:${{ github.token }}@github.com/${{ github.repository }} fastlane
-          bundle exec fastlane uploadToClosedTesting
+          fastlane uploadToClosedTesting
           if [[ $? -ne 0 ]]; then
               exit 1
           fi
@@ -155,6 +142,14 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Prepare Build Keys
+        if: ${{ github.repository == 'fossasia/pslab-android' }}
+        env:
+          ENCRYPTED_IOS_IV: ${{ secrets.ENCRYPTED_IOS_IV }}
+          ENCRYPTED_IOS_KEY: ${{ secrets.ENCRYPTED_IOS_KEY }}
+        run: |
+          bash scripts/prep-ios-key.sh
 
       - name: iOS Workflow
         uses: ./.github/actions/ios

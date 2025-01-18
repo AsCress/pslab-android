@@ -18,6 +18,13 @@ runs:
       with:
         cache: true
 
+    - name: Update Podfile
+      shell: bash
+      run: |
+        cd ./iOS
+        flutter pub get
+        pod install --repo-update
+
     - name: Build iOS IPA
       shell: bash
       env:
