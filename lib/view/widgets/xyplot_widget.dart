@@ -24,8 +24,8 @@ class _XYPlotState extends State<XYPlotWidget> {
           child: Stack(
             children: [
               Positioned(
-                top: 0.h,
-                left: 2.w,
+                top: 4.h,
+                left: 4.w,
                 right: 0.w,
                 child: Row(
                   mainAxisSize: MainAxisSize.max,
@@ -47,18 +47,27 @@ class _XYPlotState extends State<XYPlotWidget> {
                     ),
                     Padding(
                       padding: EdgeInsets.only(bottom: 2.h),
-                      child: const Text(
+                      child: Text(
                         'Enable XY Plot',
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 14.sp,
                           fontWeight: FontWeight.normal,
                           fontStyle: FontStyle.normal,
                         ),
                       ),
                     ),
-                    const Spacer(),
+                  ],
+                ),
+              ),
+              Positioned(
+                bottom: -6.h,
+                left: 14.w,
+                right: 14.w,
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
                     DropdownMenu<String>(
-                      width: 50.w,
+                      width: 95.w,
                       initialSelection: 'CH1',
                       dropdownMenuEntries: <String>[
                         'CH1',
@@ -76,12 +85,12 @@ class _XYPlotState extends State<XYPlotWidget> {
                       inputDecorationTheme: const InputDecorationTheme(
                         border: InputBorder.none,
                       ),
-                      textStyle: const TextStyle(
-                        fontSize: 14,
+                      textStyle: TextStyle(
+                        fontSize: 14.sp,
                       ),
                     ),
                     DropdownMenu<String>(
-                      width: 50.w,
+                      width: 95.w,
                       initialSelection: 'CH2',
                       dropdownMenuEntries: <String>[
                         'CH1',
@@ -99,32 +108,32 @@ class _XYPlotState extends State<XYPlotWidget> {
                       inputDecorationTheme: const InputDecorationTheme(
                         border: InputBorder.none,
                       ),
-                      textStyle: const TextStyle(
-                        fontSize: 14,
+                      textStyle: TextStyle(
+                        fontSize: 14.sp,
                       ),
                     ),
                   ],
                 ),
-              ),
+              )
             ],
           ),
         ),
         Positioned(
           left: 0.w,
           right: 0.w,
-          top: 2.h,
+          top: 1.h,
           child: Align(
             alignment: Alignment.center,
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 2.w),
               decoration: const BoxDecoration(color: Colors.white),
-              child: const Text(
+              child: Text(
                 'XY Plot',
                 style: TextStyle(
-                  color: Color(0xFFC72C2C),
+                  color: const Color(0xFFC72C2C),
                   fontStyle: FontStyle.normal,
                   fontWeight: FontWeight.bold,
-                  fontSize: 13,
+                  fontSize: 13.sp,
                 ),
               ),
             ),

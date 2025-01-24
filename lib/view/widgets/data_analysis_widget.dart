@@ -30,8 +30,8 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                 child: Stack(
                   children: [
                     Positioned(
-                      top: 0.h,
-                      left: 2.w,
+                      top: -2.h,
+                      left: 4.w,
                       right: 0.h,
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
@@ -54,10 +54,10 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                           ),
                           Padding(
                             padding: EdgeInsets.only(bottom: 2.h),
-                            child: const Text(
+                            child: Text(
                               'Fourier Analysis',
                               style: TextStyle(
-                                fontSize: 14,
+                                fontSize: 14.sp,
                                 fontWeight: FontWeight.normal,
                                 fontStyle: FontStyle.normal,
                               ),
@@ -65,9 +65,10 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                           ),
                           const Spacer(),
                           DropdownMenu<String>(
-                            width: 50.w,
-                            initialSelection: 'CH1',
+                            width: 95.w,
+                            initialSelection: 'None',
                             dropdownMenuEntries: <String>[
+                              'None',
                               'CH1',
                               'CH2',
                               'CH3',
@@ -83,22 +84,22 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                             inputDecorationTheme: const InputDecorationTheme(
                               border: InputBorder.none,
                             ),
-                            textStyle: const TextStyle(
-                              fontSize: 14,
+                            textStyle: TextStyle(
+                              fontSize: 14.sp,
                             ),
                           ),
                         ],
                       ),
                     ),
                     Positioned(
-                      bottom: 0.h,
-                      left: 6.w,
+                      bottom: -6.h,
+                      left: 14.w,
                       right: 0.h,
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           DropdownMenu<String>(
-                            width: 80.w,
+                            width: 150.w,
                             initialSelection: 'Sine Fit',
                             dropdownMenuEntries: <String>[
                               'Sine Fit',
@@ -114,17 +115,18 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                             inputDecorationTheme: const InputDecorationTheme(
                               border: InputBorder.none,
                             ),
-                            textStyle: const TextStyle(
-                              fontSize: 14,
+                            textStyle: TextStyle(
+                              fontSize: 14.sp,
                             ),
                           ),
                           const Spacer(),
                           Padding(
                             padding: EdgeInsets.only(left: 4.w),
                             child: DropdownMenu<String>(
-                              width: 50.w,
-                              initialSelection: 'CH1',
+                              width: 95.w,
+                              initialSelection: 'None',
                               dropdownMenuEntries: <String>[
+                                'None',
                                 'CH1',
                                 'CH2',
                                 'CH3',
@@ -140,8 +142,8 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                               inputDecorationTheme: const InputDecorationTheme(
                                 border: InputBorder.none,
                               ),
-                              textStyle: const TextStyle(
-                                fontSize: 14,
+                              textStyle: TextStyle(
+                                fontSize: 14.sp,
                               ),
                             ),
                           ),
@@ -154,19 +156,19 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
               Positioned(
                 left: 0.w,
                 right: 0.w,
-                top: 2.h,
+                top: 1.h,
                 child: Align(
                   alignment: Alignment.center,
                   child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 2.w),
                     decoration: const BoxDecoration(color: Colors.white),
-                    child: const Text(
+                    child: Text(
                       'Data Analysis',
                       style: TextStyle(
-                        color: Color(0xFFC72C2C),
+                        color: const Color(0xFFC72C2C),
                         fontStyle: FontStyle.normal,
                         fontWeight: FontWeight.bold,
-                        fontSize: 13,
+                        fontSize: 13.sp,
                       ),
                     ),
                   ),
@@ -189,10 +191,10 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                     Positioned(
                       bottom: 0.h,
                       top: 0.h,
-                      left: 6.w,
+                      left: 12.w,
                       child: Center(
                         child: DropdownMenu<String>(
-                          width: 50.w,
+                          width: 90.w,
                           initialSelection: 'CH1',
                           dropdownMenuEntries: <String>[
                             'CH1',
@@ -210,16 +212,16 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                           inputDecorationTheme: const InputDecorationTheme(
                             border: InputBorder.none,
                           ),
-                          textStyle: const TextStyle(
-                            fontSize: 14,
+                          textStyle: TextStyle(
+                            fontSize: 14.sp,
                           ),
                         ),
                       ),
                     ),
                     Positioned(
                       top: 4.h,
-                      right: 4.w,
-                      left: 45.w,
+                      right: 8.w,
+                      left: 75.w,
                       child: Row(
                         children: [
                           Expanded(
@@ -246,8 +248,8 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                           ),
                           Text(
                             '${verticalOffset.toStringAsFixed(2)} V',
-                            style: const TextStyle(
-                              fontSize: 14,
+                            style: TextStyle(
+                              fontSize: 14.sp,
                               fontWeight: FontWeight.normal,
                               fontStyle: FontStyle.normal,
                             ),
@@ -256,9 +258,9 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                       ),
                     ),
                     Positioned(
-                      bottom: 0.h,
-                      right: 4.w,
-                      left: 45.w,
+                      bottom: -2.h,
+                      right: 8.w,
+                      left: 75.w,
                       child: Row(
                         children: [
                           Expanded(
@@ -285,8 +287,8 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                           ),
                           Text(
                             '${horizontalOffset.toStringAsFixed(2)} ms',
-                            style: const TextStyle(
-                              fontSize: 14,
+                            style: TextStyle(
+                              fontSize: 14.sp,
                               fontWeight: FontWeight.normal,
                               fontStyle: FontStyle.normal,
                             ),
@@ -300,19 +302,19 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
               Positioned(
                 left: 0.w,
                 right: 0.w,
-                top: 2.h,
+                top: 1.h,
                 child: Align(
                   alignment: Alignment.center,
                   child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 2.w),
                     decoration: const BoxDecoration(color: Colors.white),
-                    child: const Text(
+                    child: Text(
                       'Offsets',
                       style: TextStyle(
-                        color: Color(0xFFC72C2C),
+                        color: const Color(0xFFC72C2C),
                         fontStyle: FontStyle.normal,
                         fontWeight: FontWeight.bold,
-                        fontSize: 13,
+                        fontSize: 13.sp,
                       ),
                     ),
                   ),

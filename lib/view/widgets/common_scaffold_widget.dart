@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CommonScaffold extends StatefulWidget {
   final String title;
@@ -52,9 +53,9 @@ class _CommonScaffoldState extends State<CommonScaffold> {
         title: Text(
           key: widget.scaffoldKey,
           widget.title,
-          style: const TextStyle(
+          style: TextStyle(
             color: Colors.white,
-            fontSize: 15,
+            fontSize: 15.sp,
           ),
         ),
         actions: [

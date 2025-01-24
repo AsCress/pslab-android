@@ -28,8 +28,8 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
           child: Stack(
             children: [
               Positioned(
-                top: 0.h,
-                left: 2.w,
+                top: -4.h,
+                left: 4.w,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -47,33 +47,33 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                       },
                     ),
                     Padding(
-                      padding: EdgeInsets.only(top: 2.h),
-                      child: const Text(
+                      padding: EdgeInsets.only(top: 1.h),
+                      child: Text(
                         'CH1',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontStyle: FontStyle.normal,
-                          fontSize: 15,
+                          fontSize: 14.sp,
                         ),
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(top: 1.h, left: 3.w),
-                      child: const Text(
+                      padding: EdgeInsets.only(top: 1.h, left: 8.w),
+                      child: Text(
                         'Range',
                         style: TextStyle(
-                          color: Color(0xFF424242),
+                          color: const Color(0xFF424242),
                           fontWeight: FontWeight.normal,
                           fontStyle: FontStyle.normal,
-                          fontSize: 14,
+                          fontSize: 14.sp,
                         ),
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(top: 1.h, left: 4.w),
+                      padding: EdgeInsets.only(left: 6.w),
                       child: DropdownMenu<String>(
                         initialSelection: yAxisRanges[0],
-                        width: 60.w,
+                        width: 130.w,
                         dropdownMenuEntries: yAxisRanges.map(
                           (String value) {
                             return DropdownMenuEntry<String>(
@@ -85,8 +85,8 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                         inputDecorationTheme: const InputDecorationTheme(
                           border: InputBorder.none,
                         ),
-                        textStyle: const TextStyle(
-                          fontSize: 14,
+                        textStyle: TextStyle(
+                          fontSize: 13.sp,
                         ),
                         onSelected: (String? value) {
                           switch (yAxisRanges.indexOf(value!)) {
@@ -127,7 +127,7 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                     Padding(
                       padding: EdgeInsets.only(top: 0.h),
                       child: DropdownMenu<String>(
-                        width: 50.w,
+                        width: 95.w,
                         initialSelection: rangeMenuEntries[0],
                         dropdownMenuEntries: rangeMenuEntries.map(
                           (String value) {
@@ -140,8 +140,8 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                         inputDecorationTheme: const InputDecorationTheme(
                           border: InputBorder.none,
                         ),
-                        textStyle: const TextStyle(
-                          fontSize: 15,
+                        textStyle: TextStyle(
+                          fontSize: 14.sp,
                         ),
                       ),
                     ),
@@ -149,8 +149,8 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                 ),
               ),
               Positioned(
-                left: 2.w,
-                bottom: 8.h,
+                left: 4.w,
+                bottom: 2.h,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -168,38 +168,38 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                       },
                     ),
                     Padding(
-                      padding: EdgeInsets.only(top: 2.h),
-                      child: const Text(
+                      padding: EdgeInsets.only(top: 1.h),
+                      child: Text(
                         'CH2',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontStyle: FontStyle.normal,
-                          fontSize: 15,
+                          fontSize: 14.sp,
                         ),
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(top: 1.h, left: 3.w),
-                      child: const Text(
+                      padding: EdgeInsets.only(top: 1.h, left: 8.w),
+                      child: Text(
                         'Range',
                         style: TextStyle(
-                          color: Color(0xFF424242),
+                          color: const Color(0xFF424242),
                           fontWeight: FontWeight.normal,
                           fontStyle: FontStyle.normal,
-                          fontSize: 14,
+                          fontSize: 14.sp,
                         ),
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(top: 2.h, left: 4.w),
+                      padding: EdgeInsets.only(top: 2.h, left: 6.w),
                       child: SizedBox(
-                        width: 60.w,
-                        child: const Text(
+                        width: 130.w,
+                        child: Text(
                           '+/-16V',
                           style: TextStyle(
                             fontStyle: FontStyle.normal,
                             fontWeight: FontWeight.normal,
-                            fontSize: 14,
+                            fontSize: 13.sp,
                           ),
                         ),
                       ),
@@ -208,12 +208,12 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                       padding: EdgeInsets.only(top: 2.h),
                       child: SizedBox(
                         width: 45.w,
-                        child: const Text(
+                        child: Text(
                           'CH2',
                           style: TextStyle(
                             fontStyle: FontStyle.normal,
                             fontWeight: FontWeight.normal,
-                            fontSize: 15,
+                            fontSize: 14.sp,
                           ),
                         ),
                       ),
@@ -222,8 +222,8 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                 ),
               ),
               Positioned(
-                top: 16.h,
-                right: 4.w,
+                top: 4.h,
+                right: 8.w,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -241,13 +241,13 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                       },
                     ),
                     Padding(
-                      padding: EdgeInsets.only(top: 2.h),
-                      child: const Text(
+                      padding: EdgeInsets.only(top: 1.h),
+                      child: Text(
                         'CH3 (+/- 3.3V)',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontStyle: FontStyle.normal,
-                          fontSize: 15,
+                          fontSize: 14.sp,
                         ),
                       ),
                     ),
@@ -255,8 +255,8 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                 ),
               ),
               Positioned(
-                bottom: 8.h,
-                right: 4.w,
+                bottom: 2.h,
+                right: 8.w,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -289,10 +289,10 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                     ),
                     Padding(
                       padding: EdgeInsets.only(top: 2.h),
-                      child: const Text(
+                      child: Text(
                         'In-Built MIC',
                         style: TextStyle(
-                          fontSize: 15,
+                          fontSize: 14.sp,
                           fontWeight: FontWeight.bold,
                           fontStyle: FontStyle.normal,
                         ),
@@ -324,10 +324,10 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                     ),
                     Padding(
                       padding: EdgeInsets.only(top: 2.h),
-                      child: const Text(
+                      child: Text(
                         'PSLab MIC',
                         style: TextStyle(
-                          fontSize: 15,
+                          fontSize: 14.sp,
                           fontWeight: FontWeight.bold,
                           fontStyle: FontStyle.normal,
                         ),
@@ -342,19 +342,19 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
         Positioned(
           left: 0.w,
           right: 0.w,
-          top: 2.h,
+          top: 1.h,
           child: Align(
             alignment: Alignment.center,
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 2.w),
               decoration: const BoxDecoration(color: Colors.white),
-              child: const Text(
-                'Channel Parameters',
+              child: Text(
+                'Channels',
                 style: TextStyle(
-                  color: Color(0xFFC72C2C),
+                  color: const Color(0xFFC72C2C),
                   fontStyle: FontStyle.normal,
                   fontWeight: FontWeight.bold,
-                  fontSize: 13,
+                  fontSize: 13.sp,
                 ),
               ),
             ),

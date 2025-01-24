@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/providers/board_state_provider.dart';
 
@@ -50,9 +51,9 @@ class _MainScaffoldState extends State<MainScaffold> {
         title: Text(
           key: widget.scaffoldKey,
           widget.title,
-          style: const TextStyle(
+          style: TextStyle(
             color: Colors.white,
-            fontSize: 18,
+            fontSize: 18.sp,
           ),
         ),
         actions: [

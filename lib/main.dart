@@ -8,6 +8,8 @@ import 'package:pslab/view/faq_screen.dart';
 import 'package:pslab/view/instruments_screen.dart';
 import 'package:pslab/view/oscilloscope_screen.dart';
 
+import 'constants.dart';
+
 void main() {
   setupLocator();
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,8 +31,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    _preCacheImages(context);
     return ScreenUtilInit(
-      designSize: const Size(360, 690),
       builder: (context, child) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
@@ -49,4 +51,12 @@ class MyApp extends StatelessWidget {
       },
     );
   }
+}
+
+void _preCacheImages(BuildContext context) {
+  for (final path in instrumentIcons) {
+    precacheImage(AssetImage(path), context);
+  }
+  precacheImage(
+      const AssetImage('assets/icons/ic_nav_header_logo.png'), context);
 }

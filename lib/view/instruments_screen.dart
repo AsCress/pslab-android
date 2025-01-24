@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pslab/constants.dart';
 import 'package:pslab/view/widgets/applications_list_item.dart';
 import 'package:pslab/view/widgets/main_scaffold_widget.dart';
@@ -15,7 +16,16 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
   void _onItemTapped(int index) {
     switch (index) {
       case 0:
-        Navigator.pushNamed(context, '/oscilloscope');
+        if (Navigator.canPop(context) &&
+            ModalRoute.of(context)?.settings.name == '/oscilloscope') {
+          Navigator.popUntil(context, ModalRoute.withName('/oscilloscope'));
+        } else {
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            '/oscilloscope',
+            (route) => route.isFirst,
+          );
+        }
         break;
       default:
         break;
@@ -35,8 +45,6 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.landscapeRight,
     ]);
   }
 
@@ -47,6 +55,9 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.configure(
+      designSize: const Size(360, 690),
+    );
     return MainScaffold(
       index: 0,
       title: 'Instruments',

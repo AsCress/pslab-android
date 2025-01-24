@@ -38,6 +38,9 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.configure(
+      designSize: const Size(690, 360),
+    );
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => OscilloscopeStateProvider()),
@@ -50,12 +53,12 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
             child: Row(
               children: [
                 Container(
-                  width: 310.w,
+                  width: 590.w,
                   margin: const EdgeInsets.only(right: 5),
                   child: Column(
                     children: [
                       SizedBox(
-                        height: 380.h,
+                        height: 197.h,
                         child: LineChart(
                           LineChartData(
                             backgroundColor: Colors.black,

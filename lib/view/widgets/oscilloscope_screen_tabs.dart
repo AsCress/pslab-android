@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/providers/oscilloscope_state_provider.dart';
 
@@ -62,13 +63,13 @@ class _OscilloscopeTabsState extends State<OscilloscopeScreenTabs> {
                     color: oscilloscopeStateProvider.selectedIndex == 0
                         ? const Color(0xFFC72C2C)
                         : Colors.transparent,
-                    child: const Text(
+                    child: Text(
                       'Channels',
                       textAlign: TextAlign.center,
                       maxLines: 1,
                       style: TextStyle(
                         color: Colors.black,
-                        fontSize: 9,
+                        fontSize: 9.sp,
                         fontStyle: FontStyle.normal,
                         fontWeight: FontWeight.bold,
                       ),
@@ -114,13 +115,13 @@ class _OscilloscopeTabsState extends State<OscilloscopeScreenTabs> {
                       color: oscilloscopeStateProvider.selectedIndex == 1
                           ? const Color(0xFFC72C2C)
                           : Colors.transparent,
-                      child: const Text(
+                      child: Text(
                         'Timebase',
                         textAlign: TextAlign.center,
                         maxLines: 1,
                         style: TextStyle(
                           color: Colors.black,
-                          fontSize: 9,
+                          fontSize: 9.sp,
                           fontStyle: FontStyle.normal,
                           fontWeight: FontWeight.bold,
                         ),
@@ -165,13 +166,13 @@ class _OscilloscopeTabsState extends State<OscilloscopeScreenTabs> {
                       color: oscilloscopeStateProvider.selectedIndex == 2
                           ? const Color(0xFFC72C2C)
                           : Colors.transparent,
-                      child: const Text(
+                      child: Text(
                         'Data Analysis',
                         textAlign: TextAlign.center,
                         maxLines: 1,
                         style: TextStyle(
                           color: Colors.black,
-                          fontSize: 9,
+                          fontSize: 9.sp,
                           fontStyle: FontStyle.normal,
                           fontWeight: FontWeight.bold,
                         ),
@@ -216,13 +217,13 @@ class _OscilloscopeTabsState extends State<OscilloscopeScreenTabs> {
                     color: oscilloscopeStateProvider.selectedIndex == 3
                         ? const Color(0xFFC72C2C)
                         : Colors.transparent,
-                    child: const Text(
+                    child: Text(
                       'XY Plot',
                       textAlign: TextAlign.center,
                       maxLines: 1,
                       style: TextStyle(
                         color: Colors.black,
-                        fontSize: 9,
+                        fontSize: 9.sp,
                         fontStyle: FontStyle.normal,
                         fontWeight: FontWeight.bold,
                       ),

@@ -26,13 +26,13 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
           child: Stack(
             children: [
               Positioned(
-                top: 0.h,
-                left: 2.w,
+                bottom: -4.h,
+                left: 4.w,
                 right: 0.w,
                 child: Row(
                   children: [
                     Padding(
-                      padding: EdgeInsets.only(bottom: 2.h),
+                      padding: EdgeInsets.only(bottom: 1.h),
                       child: Checkbox(
                         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         activeColor: const Color(0xFFCE525F),
@@ -47,20 +47,20 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(bottom: 2.h),
-                      child: const Text(
+                      padding: EdgeInsets.only(bottom: 1.h),
+                      child: Text(
                         'Trigger',
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 14.sp,
                           fontWeight: FontWeight.bold,
                           fontStyle: FontStyle.normal,
                         ),
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(left: 8.w),
+                      padding: EdgeInsets.only(left: 12.w),
                       child: DropdownMenu<String>(
-                        width: 50.w,
+                        width: 95.w,
                         initialSelection: 'CH1',
                         dropdownMenuEntries: <String>[
                           'CH1',
@@ -78,8 +78,8 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                         inputDecorationTheme: const InputDecorationTheme(
                           border: InputBorder.none,
                         ),
-                        textStyle: const TextStyle(
-                          fontSize: 14,
+                        textStyle: TextStyle(
+                          fontSize: 14.sp,
                         ),
                       ),
                     ),
@@ -105,18 +105,21 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                         ),
                       ),
                     ),
-                    Text(
-                      '${triggerValue.toStringAsFixed(1)} V',
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.normal,
-                        fontStyle: FontStyle.normal,
+                    Padding(
+                      padding: EdgeInsets.only(left: 8.w),
+                      child: Text(
+                        '${triggerValue.toStringAsFixed(1)} V',
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.normal,
+                          fontStyle: FontStyle.normal,
+                        ),
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(left: 8.w),
+                      padding: EdgeInsets.only(left: 20.w),
                       child: DropdownMenu<String>(
-                        width: 70.w,
+                        width: 145.w,
                         initialSelection: 'Rising Edge',
                         dropdownMenuEntries: <String>[
                           'Rising Edge',
@@ -133,8 +136,8 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                         inputDecorationTheme: const InputDecorationTheme(
                           border: InputBorder.none,
                         ),
-                        textStyle: const TextStyle(
-                          fontSize: 14,
+                        textStyle: TextStyle(
+                          fontSize: 14.sp,
                         ),
                       ),
                     ),
@@ -142,19 +145,22 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                 ),
               ),
               Positioned(
-                bottom: 0.h,
-                left: 8.w,
-                right: 8.w,
+                top: 0.h,
+                left: 16.w,
+                right: 24.w,
                 child: Row(
                   mainAxisSize: MainAxisSize.max,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const Text(
-                      'Timebase',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        fontStyle: FontStyle.normal,
+                    Padding(
+                      padding: EdgeInsets.only(right: 40.w),
+                      child: Text(
+                        'Timebase',
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.bold,
+                          fontStyle: FontStyle.normal,
+                        ),
                       ),
                     ),
                     Expanded(
@@ -180,12 +186,15 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                         ),
                       ),
                     ),
-                    Text(
-                      '${_timebaseSlider.toStringAsFixed(2)} ms',
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.normal,
-                        fontStyle: FontStyle.normal,
+                    Padding(
+                      padding: EdgeInsets.only(left: 40.w),
+                      child: Text(
+                        '${_timebaseSlider.toStringAsFixed(2)} ms',
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.normal,
+                          fontStyle: FontStyle.normal,
+                        ),
                       ),
                     ),
                   ],
@@ -197,19 +206,19 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
         Positioned(
           left: 0.w,
           right: 0.w,
-          top: 2.h,
+          top: 1.h,
           child: Align(
             alignment: Alignment.center,
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 2.w),
               decoration: const BoxDecoration(color: Colors.white),
-              child: const Text(
+              child: Text(
                 'Timebase & Trigger',
                 style: TextStyle(
-                  color: Color(0xFFC72C2C),
+                  color: const Color(0xFFC72C2C),
                   fontStyle: FontStyle.normal,
                   fontWeight: FontWeight.bold,
-                  fontSize: 13,
+                  fontSize: 13.sp,
                 ),
               ),
             ),
