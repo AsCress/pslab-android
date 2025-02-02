@@ -2,7 +2,7 @@ name: Push
 
 on:
   push:
-    branches: ["flutter"]
+    branches: [ "flutter" ]
 
 jobs:
   common:
@@ -151,15 +151,37 @@ jobs:
         run: |
           bash scripts/prep-ios-key.sh
 
+      - name: Setup Certs
+        if: ${{ github.repository == 'fossasia/pslab-android' }}
+        env:
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
+        run: |
+          cd ./iOS
+          git clone --branch=fastlane-ios --depth=1 https://${{ github.repository_owner }}:${{ github.token }}@github.com/${{ github.repository }} fastlane
+          fastlane setupCertificates
+          if [[ $? -ne 0 ]]; then
+              exit 1
+          fi    
+
       - name: iOS Workflow
         uses: ./.github/actions/ios
         with:
           VERSION_NAME: ${{needs.common.outputs.VERSION_NAME}}
           VERSION_CODE: ${{needs.common.outputs.VERSION_CODE}}
 
+      - name: Push app to testflight
+        if: ${{ github.repository == 'fossasia/pslab-android' }}
+        run: |
+          cd ./iOS
+          fastlane uploadToBeta
+          if [[ $? -ne 0 ]]; then
+              exit 1
+          fi        
+
   update-release:
     name: Update Draft Release
-    needs: [common, android, ios]
+    needs: [ common, android, ios ]
     runs-on: ubuntu-latest
     steps:
       - name: Run Release Drafter
