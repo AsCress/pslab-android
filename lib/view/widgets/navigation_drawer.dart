@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import 'package:pslab/providers/board_state_provider.dart';
 
 class NavDrawer extends StatefulWidget {
   final int selectedIndex;
@@ -17,7 +17,9 @@ class _NavDrawerState extends State<NavDrawer> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      width: 280.w,
+      width: MediaQuery.of(context).orientation == Orientation.portrait
+          ? MediaQuery.of(context).size.width * 0.75
+          : MediaQuery.of(context).size.width * 0.45,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.zero,
       ),
@@ -39,12 +41,17 @@ class _NavDrawerState extends State<NavDrawer> {
                       fit: BoxFit.contain,
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 16),
-                    child: Text('Not Connected',
-                        style: GoogleFonts.roboto(
-                          fontSize: 14,
-                        )),
+                  Consumer<BoardStateProvider>(
+                    builder: (context, provider, _) {
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 16),
+                        child: Text(
+                          provider.pslabVersionID,
+                          style: const TextStyle(
+                              fontSize: 14, fontStyle: FontStyle.normal),
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),
