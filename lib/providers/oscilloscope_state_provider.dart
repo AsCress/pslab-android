@@ -6,6 +6,7 @@ import 'package:data/data.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:pslab/others/logger_service.dart';
+import 'package:pslab/others/oscilloscope_axes_scale.dart';
 import 'package:pslab/providers/locator.dart';
 
 import '../communication/analytics_class.dart';
@@ -57,12 +58,12 @@ class OscilloscopeStateProvider extends ChangeNotifier {
   late String curveFittingChannel2;
   late Map<String, double> xOffsets;
   late Map<String, double> yOffsets;
-  late double _trigger;
+  late double trigger;
   late ScienceLab _scienceLab;
   late AnalyticsClass _analyticsClass;
   late bool _monitor;
   late double _maxAmp;
-  // late double _maxFreq;
+  late double _maxFreq;
   late bool _isRecording;
   late bool _isRunning;
   // bool _isMeasurementsChecked = false;
@@ -71,10 +72,6 @@ class OscilloscopeStateProvider extends ChangeNotifier {
   late String xyPlotAxis2;
   late List<List<FlSpot>> dataEntries;
   late List<String> dataParamsChannels;
-
-  late double _yAxisScale;
-  double get yAxisScale => _yAxisScale;
-
   late int _timebaseDivisions;
   int get timebaseDivisions => _timebaseDivisions;
 
@@ -85,6 +82,8 @@ class OscilloscopeStateProvider extends ChangeNotifier {
   late bool _isProcessing;
 
   late Timer _timer;
+
+  late OscillscopeAxesScale oscillscopeAxesScale;
 
   OscilloscopeStateProvider() {
     _audioJack = AudioJack();
@@ -103,10 +102,9 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     _monitor = true;
     _isRecording = false;
     _isRunning = true;
-    xyPlotAxis1 = 'CH1';
-    xyPlotAxis2 = 'CH2';
+    xyPlotAxis1 = CHANNEL.ch1.toString();
+    xyPlotAxis2 = CHANNEL.ch2.toString();
     dataEntries = [];
-    _yAxisScale = 16;
     _timebaseDivisions = 8;
     timebaseSlider = 0;
     oscillscopeRangeSelection = 0;
@@ -120,7 +118,8 @@ class OscilloscopeStateProvider extends ChangeNotifier {
 
     _scienceLab = getIt.get<ScienceLab>();
     triggerChannel = CHANNEL.ch1.toString();
-    _trigger = 0;
+    triggerMode = MODE.rising.toString();
+    trigger = 0;
     timebase = 875;
     samples = 512;
     timeGap = 2;
@@ -141,6 +140,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     curveFittingChannel1 = '';
     curveFittingChannel2 = '';
     _analyticsClass = AnalyticsClass();
+    oscillscopeAxesScale = OscillscopeAxesScale();
 
     monitor();
   }
@@ -200,7 +200,58 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     );
   }
 
-  Future<void> xyPlotTask(String xyPlotAxis1, String xyPlotAxis2) async {}
+  Future<void> xyPlotTask(String xyPlotAxis1, String xyPlotAxis2) async {
+    String analogInput1 = xyPlotAxis1;
+    String analogInput2 = xyPlotAxis2;
+    List<List<FlSpot>> entries = [];
+
+    Map<String, List<double>> data;
+    entries.add([]);
+    if (analogInput1 == analogInput2) {
+      await _scienceLab.captureTraces(
+          1, samples, timeGap, analogInput1, isTriggerSelected, null);
+      data = await _scienceLab.fetchTrace(1);
+      List<double>? yData = data['y'];
+      int n = yData!.length;
+      for (int i = 0; i < n; i++) {
+        entries[0].add(FlSpot(yData[i], yData[i]));
+      }
+    } else {
+      int noOfChannels = 1;
+      if ((analogInput1 == CHANNEL.ch1.toString() &&
+              analogInput2 == CHANNEL.ch2.toString()) ||
+          (analogInput1 == CHANNEL.ch2.toString() &&
+              analogInput2 == CHANNEL.ch1.toString())) {
+        noOfChannels = 2;
+        await _scienceLab.captureTraces(
+            noOfChannels, 175, timeGap, 'CH1', isTriggerSelected, null);
+        data = await _scienceLab.fetchTrace(1);
+        List<double>? yData1 = data['y'];
+        data = await _scienceLab.fetchTrace(2);
+        List<double>? yData2 = data['y'];
+        int n = min(yData1!.length, yData2!.length);
+        for (int i = 0; i < n; i++) {
+          entries[0].add(FlSpot(yData1[i], yData2[i]));
+        }
+      } else {
+        noOfChannels = 4;
+        await _scienceLab.captureTraces(
+            noOfChannels, 175, timeGap, 'CH1', isTriggerSelected, null);
+        data =
+            await _scienceLab.fetchTrace(_channelIndexMap[analogInput1]! + 1);
+        List<double>? yData1 = data['y'];
+        data =
+            await _scienceLab.fetchTrace(_channelIndexMap[analogInput2]! + 1);
+        List<double>? yData2 = data['y'];
+        int n = min(yData1!.length, yData2!.length);
+        for (int i = 0; i < n; i++) {
+          entries[0].add(FlSpot(yData1[i], yData2[i]));
+        }
+      }
+    }
+    dataEntries = List.from(entries);
+    notifyListeners();
+  }
 
   Future<void> captureTask(List<String> channels) async {
     List<List<FlSpot>> entries = [];
@@ -246,7 +297,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
           fftOut = fft(yComplex);
         }
         double factor = samples * timeGap * 1e-3;
-        // _maxFreq = (n / 2 - 1) / factor;
+        _maxFreq = (n / 2 - 1) / factor;
         double mA = 0;
         double prevY = yData[0];
         bool increasing = false;
@@ -266,18 +317,18 @@ class OscilloscopeStateProvider extends ChangeNotifier {
                 xValue += timeGap;
               }
               if (triggerMode == MODE.rising.toString() &&
-                  prevY < _trigger &&
-                  currY >= _trigger &&
+                  prevY < trigger &&
+                  currY >= trigger &&
                   increasing) {
                 isTriggered = true;
               } else if (triggerMode == MODE.falling.toString() &&
-                  prevY > _trigger &&
-                  currY <= _trigger &&
+                  prevY > trigger &&
+                  currY <= trigger &&
                   !increasing) {
                 isTriggered = true;
               } else if (triggerMode == MODE.dual.toString() &&
-                      (prevY < _trigger && currY >= _trigger && increasing) ||
-                  (prevY > _trigger && currY <= _trigger && !increasing)) {
+                      (prevY < trigger && currY >= trigger && increasing) ||
+                  (prevY > trigger && currY <= trigger && !increasing)) {
                 isTriggered = true;
               }
               prevY = currY;
@@ -358,7 +409,8 @@ class OscilloscopeStateProvider extends ChangeNotifier {
         int n = buffer.length;
         List<Complex> fftOut = [];
         if (isFourierTransformSelected) {
-          List<Complex> yComplex = List.filled(buffer.length, const Complex(0));
+          List<Complex> yComplex =
+              List.filled(buffer.length, const Complex(0), growable: true);
           for (int j = 0; j < buffer.length; j++) {
             double audioValue = buffer[j] * 3;
             yComplex[j] = Complex(audioValue);
@@ -366,7 +418,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
           fftOut = fft(yComplex);
         }
         double factor = buffer.length * timeGap * 1e-3;
-        // _maxFreq = (n / 2 - 1) / factor;
+        _maxFreq = (n / 2 - 1) / factor;
         double mA = 0;
         double prevY = buffer[0] * 3;
         bool increasing = false;
@@ -387,18 +439,18 @@ class OscilloscopeStateProvider extends ChangeNotifier {
                 increasing = false;
               }
               if (triggerMode == MODE.rising.toString() &&
-                  prevY < _trigger &&
-                  currY >= _trigger &&
+                  prevY < trigger &&
+                  currY >= trigger &&
                   increasing) {
                 isTriggered = true;
               } else if (triggerMode == MODE.falling.toString() &&
-                  prevY > _trigger &&
-                  currY <= _trigger &&
+                  prevY > trigger &&
+                  currY <= trigger &&
                   !increasing) {
                 isTriggered = true;
               } else if (triggerMode == MODE.dual.toString() &&
-                      (prevY < _trigger && currY >= _trigger && increasing) ||
-                  (prevY > _trigger && currY <= _trigger && !increasing)) {
+                      (prevY < trigger && currY >= trigger && increasing) ||
+                  (prevY > trigger && currY <= trigger && !increasing)) {
                 isTriggered = true;
               }
               if (isTriggered) {
@@ -431,15 +483,19 @@ class OscilloscopeStateProvider extends ChangeNotifier {
 
       dataEntries = List.from(entries);
       dataParamsChannels = List.from(paramsChannels);
+      if (isFourierTransformSelected) {
+        oscillscopeAxesScale.setYAxisScaleMax(_maxAmp);
+        oscillscopeAxesScale.setYAxisScaleMin(0);
+        oscillscopeAxesScale.setXAxisScale(_maxFreq * 1000);
+      } else {
+        oscillscopeAxesScale.setYAxisScaleMax(oscillscopeAxesScale.yAxisScale);
+        oscillscopeAxesScale.setYAxisScaleMin(-oscillscopeAxesScale.yAxisScale);
+        oscillscopeAxesScale.setXAxisScale(timebase);
+      }
       notifyListeners();
     } catch (e) {
       logger.e(e);
     }
-  }
-
-  void setYAxisScale(double range) {
-    _yAxisScale = range;
-    notifyListeners();
   }
 
   void setTimebaseDivisions(int divisions) {
@@ -481,31 +537,6 @@ class OscilloscopeStateProvider extends ChangeNotifier {
         break;
     }
     notifyListeners();
-  }
-
-  double getTimebaseInterval() {
-    switch (timebase) {
-      case 875.00:
-        return 100;
-      case 1000.00:
-        return 0.2;
-      case 2000.00:
-        return 0.3;
-      case 4000.00:
-        return 0.7;
-      case 8000.00:
-        return 1;
-      case 25600.00:
-        return 4;
-      case 38400.00:
-        return 10;
-      case 51200.00:
-        return 10;
-      case 102400.00:
-        return 20;
-      default:
-        return 100;
-    }
   }
 
   List<LineChartBarData> createLineBarsData() {

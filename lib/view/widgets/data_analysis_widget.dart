@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:pslab/providers/oscilloscope_state_provider.dart';
 
 class DataAnalysisWidget extends StatefulWidget {
   const DataAnalysisWidget({super.key});
@@ -8,12 +10,13 @@ class DataAnalysisWidget extends StatefulWidget {
 }
 
 class _DataAnalysisState extends State<DataAnalysisWidget> {
-  bool? isFourierTransformSelected = false;
   double horizontalOffset = 0;
   double verticalOffset = 0;
 
   @override
   Widget build(BuildContext context) {
+    OscilloscopeStateProvider oscilloscopeStateProvider =
+        Provider.of<OscilloscopeStateProvider>(context, listen: false);
     return Row(
       mainAxisSize: MainAxisSize.max,
       children: [
@@ -39,11 +42,13 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                             materialTapTargetSize:
                                 MaterialTapTargetSize.shrinkWrap,
                             activeColor: const Color(0xFFCE525F),
-                            value: isFourierTransformSelected,
+                            value: oscilloscopeStateProvider
+                                .isFourierTransformSelected,
                             onChanged: (bool? value) {
                               setState(
                                 () {
-                                  isFourierTransformSelected = value;
+                                  oscilloscopeStateProvider
+                                      .isFourierTransformSelected = value!;
                                 },
                               );
                             },

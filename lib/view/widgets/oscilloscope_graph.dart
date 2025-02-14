@@ -19,6 +19,7 @@ class _OscilloscopeGraphState extends State<OscilloscopeGraph> {
     return SideTitleWidget(
       meta: meta,
       child: Text(
+        maxLines: 1,
         meta.formattedValue,
         style: style,
       ),
@@ -33,6 +34,7 @@ class _OscilloscopeGraphState extends State<OscilloscopeGraph> {
     return SideTitleWidget(
       meta: meta,
       child: Text(
+        maxLines: 1,
         meta.formattedValue,
         style: style,
       ),
@@ -53,7 +55,8 @@ class _OscilloscopeGraphState extends State<OscilloscopeGraph> {
                 show: true,
                 topTitles: AxisTitles(
                   axisNameWidget: Text(
-                    oscilloscopeStateProvider.timebase == 875
+                    oscilloscopeStateProvider.oscillscopeAxesScale.xAxisScale ==
+                            875
                         ? 'Time (\u00b5s)'
                         : 'Time (ms)',
                     style: const TextStyle(
@@ -64,7 +67,8 @@ class _OscilloscopeGraphState extends State<OscilloscopeGraph> {
                   ),
                   sideTitles: SideTitles(
                     maxIncluded: false,
-                    interval: oscilloscopeStateProvider.getTimebaseInterval(),
+                    interval: oscilloscopeStateProvider.oscillscopeAxesScale
+                        .getTimebaseInterval(),
                     reservedSize: 20,
                     showTitles: true,
                     getTitlesWidget: topTitleWidgets,
@@ -82,7 +86,7 @@ class _OscilloscopeGraphState extends State<OscilloscopeGraph> {
                     ),
                   ),
                   sideTitles: SideTitles(
-                    interval: provider.yAxisScale / 4,
+                    interval: provider.oscillscopeAxesScale.yAxisScaleMax / 4,
                     reservedSize: 30,
                     showTitles: true,
                     getTitlesWidget: sideTitleWidgets,
@@ -98,7 +102,7 @@ class _OscilloscopeGraphState extends State<OscilloscopeGraph> {
                     ),
                   ),
                   sideTitles: SideTitles(
-                    interval: provider.yAxisScale / 4,
+                    interval: provider.oscillscopeAxesScale.yAxisScaleMax / 4,
                     reservedSize: 30,
                     showTitles: true,
                     getTitlesWidget: sideTitleWidgets,
@@ -109,9 +113,10 @@ class _OscilloscopeGraphState extends State<OscilloscopeGraph> {
                 show: true,
                 drawHorizontalLine: true,
                 drawVerticalLine: true,
-                horizontalInterval: provider.yAxisScale / 4,
-                verticalInterval:
-                    oscilloscopeStateProvider.getTimebaseInterval(),
+                horizontalInterval:
+                    provider.oscillscopeAxesScale.yAxisScaleMax / 4,
+                verticalInterval: oscilloscopeStateProvider.oscillscopeAxesScale
+                    .getTimebaseInterval(),
               ),
               borderData: FlBorderData(
                 show: true,
@@ -130,11 +135,13 @@ class _OscilloscopeGraphState extends State<OscilloscopeGraph> {
                   ),
                 ),
               ),
-              maxY: provider.yAxisScale,
-              minY: -provider.yAxisScale,
-              maxX: oscilloscopeStateProvider.timebase == 875
-                  ? oscilloscopeStateProvider.timebase
-                  : oscilloscopeStateProvider.timebase / 1000,
+              maxY: provider.oscillscopeAxesScale.yAxisScaleMax,
+              minY: provider.oscillscopeAxesScale.yAxisScaleMin,
+              maxX: oscilloscopeStateProvider.oscillscopeAxesScale.xAxisScale ==
+                      875
+                  ? oscilloscopeStateProvider.oscillscopeAxesScale.xAxisScale
+                  : oscilloscopeStateProvider.oscillscopeAxesScale.xAxisScale /
+                      1000,
               minX: 0,
               clipData: const FlClipData.all(),
               lineBarsData: oscilloscopeStateProvider.createLineBarsData(),
