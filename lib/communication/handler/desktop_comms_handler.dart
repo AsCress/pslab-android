@@ -82,15 +82,10 @@ class DesktopUSBCommunicationHandler implements CommunicationHandler {
             await mDevice?.read(bytesToBeReadTemp, timeoutMillis);
         int? readNow = receivedData?.length;
         logger.d("Received chunk: $receivedData");
-        if (readNow == 0) {
-          logger.e("Read Error: $bytesToBeReadTemp");
-          return numBytesRead;
-        } else {
-          int readLength = readNow!.clamp(0, bytesToBeReadTemp);
-          dest.setRange(numBytesRead, numBytesRead + readLength, receivedData!);
-          numBytesRead += readLength;
-          bytesToBeReadTemp -= readLength;
-        }
+        int readLength = readNow!.clamp(0, bytesToBeReadTemp);
+        dest.setRange(numBytesRead, numBytesRead + readLength, receivedData!);
+        numBytesRead += readLength;
+        bytesToBeReadTemp -= readLength;
       }
     } catch (e) {
       logger.e("Exception during read: $e");
